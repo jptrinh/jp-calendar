@@ -272,6 +272,26 @@ export default {
                     ? wwLib.wwLang.getText(props.content.noEventsText)
                     : undefined,
                 buttonText: Object.keys(buttonText).length > 0 ? buttonText : undefined,
+                eventContent: arg => {
+                    const doc = wwLib.getFrontDocument();
+                    const container = doc.createElement('div');
+                    container.className = 'fc-event-custom';
+
+                    const titleEl = doc.createElement('div');
+                    titleEl.className = 'fc-event-custom-title';
+                    titleEl.textContent = arg.event.title || '';
+                    container.appendChild(titleEl);
+
+                    const eventContent = arg.event.extendedProps?.content;
+                    if (eventContent) {
+                        const contentEl = doc.createElement('div');
+                        contentEl.className = 'fc-event-custom-content';
+                        contentEl.textContent = eventContent;
+                        container.appendChild(contentEl);
+                    }
+
+                    return { domNodes: [container] };
+                },
                 // Add all event handlers directly to the options object
                 eventClick: info => {
                     if (isEditing.value || props.content?.disableInteractions) return;
@@ -588,6 +608,33 @@ export default {
 
         .fc-event {
             cursor: pointer;
+        }
+
+        .fc-event-custom {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            width: 100%;
+            padding: 1px 2px;
+        }
+
+        .fc-event-custom-title {
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            white-space: normal;
+        }
+
+        .fc-event-custom-content {
+            font-size: 0.85em;
+            opacity: 0.85;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .fc-toolbar-title {
